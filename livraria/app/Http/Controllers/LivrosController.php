@@ -51,7 +51,7 @@ class LivrosController extends Controller
                 'isbn'=>['required','min:13','max:13'],
                 'observacoes'=>['nullable','min:3', 'max:255'],
                 'imagem_capa'=>['file','nullable','max:2000'],
-                'excerto'=>['file','mimes:pdf, docx', 'max:2000'],
+                'excerto'=>['file','mimes:pdf,docx', 'max:2000'],
                 'id_genero'=>['numeric', 'nullable'],
                 'sinopse'=>['nullable','min:3', 'max:255'],
             ]);
