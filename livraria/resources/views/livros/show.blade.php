@@ -69,13 +69,15 @@ Deleted_at: {{$livro->deleted_at}}<br>-->
         @if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))
             <a href="{{route('livros.edit', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Editar Livro</a>
             <a href="{{route('livros.delete', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Eliminar Livro</a>
-            
+        @endif
+        @elseif(Auth::user()->id == $livro->id_user)
+             @if(Gate::allows('atualizar-livro',$livro)||Gate::allows('normal'))
+                 <a href="{{route('livros.edit', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Editar Livro</a>
+                 <a href="{{route('livros.delete', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Eliminar Livro</a>
+            @endif
         @endif
     @endif
-@else
-    <a href="{{route('livros.edit', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Editar Livro</a>
-    <a href="{{route('livros.delete', ['id'=>$livro->id_livro])}}" class="btn btn-primary">Eliminar Livro</a>
-@endif
+ 
 <br>
 <br>
 @if(auth()->check())

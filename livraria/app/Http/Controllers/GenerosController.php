@@ -11,7 +11,7 @@ class GenerosController extends Controller
     //
     public function index(){
         //$generos = Genero::all()->sortbydesc('idl');
-        $generos= Genero::paginate(4);
+        $generos= Genero::paginate(8);
         return view('generos.index',[
             'generos'=>$generos
         ]);

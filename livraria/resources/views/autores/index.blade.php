@@ -3,6 +3,7 @@
 Livraria-Autores
 @endsection
 @section('conteudo')
+@if(auth()->check())
 <br>
 <ul>
 @foreach($autores as $autor)
@@ -14,8 +15,8 @@ Livraria-Autores
 <br>
 {{$autores->render()}}
 <br>
-@if(auth()->check())
-	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))
+
+	@if(Gate::allows('atualizar-autor',$autor)||Gate::allows('admin'))
 <a href="{{route('autores.create')}}" class="btn btn-primary">Adicionar Autor</a>
 	@endif
 @endif

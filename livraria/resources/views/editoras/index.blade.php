@@ -3,6 +3,7 @@
 Livraria-editoras
 @endsection
 @section('conteudo')
+@if(auth()->check())
 <br>
 <ul>
 @foreach($editoras as $editora)
@@ -14,8 +15,8 @@ Livraria-editoras
 <br>
 {{$editoras->render()}}
 <br>
-@if(auth()->check())
-	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))
+
+	@if(Gate::allows('atualizar-editora',$editora)||Gate::allows('admin'))
 <a href="{{route('editoras.create')}}" class="btn btn-primary">Adicionar Editora</a>
 	@endif
 @endif

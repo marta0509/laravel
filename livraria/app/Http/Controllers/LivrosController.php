@@ -16,7 +16,7 @@ class LivrosController extends Controller
     //
     public function index(){
         //$livros = Livro::all()->sortbydesc('idl');
-        $livros= Livro::paginate(4);
+        $livros= Livro::paginate(8);
         return view('livros.index',[
             'livros'=>$livros
         ]);
@@ -46,11 +46,11 @@ class LivrosController extends Controller
             $novoLivro = $req -> validate([
                 'titulo'=>['required','min:3', 'max:100'],
                 'idioma'=>['required','min:3', 'max:10'],
-                'total_paginas'=>['nullable','numeric'],
+                'total_paginas'=>['nullable','numeric','min:1'],
                 'data_edicao'=>['nullable','date'],
                 'isbn'=>['required','min:13','max:13'],
                 'observacoes'=>['nullable','min:3', 'max:255'],
-                'imagem_capa'=>['image','nullable','max:2000'],
+                'imagem_capa'=>['file','nullable','max:2000'],
                 'excerto'=>['file','mimes:pdf, docx', 'max:2000'],
                 'id_genero'=>['numeric', 'nullable'],
                 'sinopse'=>['nullable','min:3', 'max:255'],
@@ -92,7 +92,7 @@ class LivrosController extends Controller
         $editoras = Editora::all();
         $editLivro = $req->id;
         $livro=Livro::where('id_livro',$editLivro)->with(['autores','editoras','user'])->first();
-        if(Gate::allows('atualizar-livro',$livro)|| Gate::allows('admin')){
+        if(Gate::allows('atualizar-livro',$livro)|| Gate::allows('admin')||Gate::allows('normal')){
             $autoresLivro = [];
             $generos = Genero::all();
             $autores = Autor::all();
@@ -132,9 +132,6 @@ class LivrosController extends Controller
                     'editorasLivro'=>$editorasLivro
                 ]);
             }
-            /*if (!is_null($request->imagem_anterior)) {
-                Storage::Delete('imagens/livros/'.$request->imagem_anterior);
-            }*/
         }
         else{
             return redirect()->route('livros.index')
@@ -142,17 +139,17 @@ class LivrosController extends Controller
         }
     }
 
-    public function update(Request $req){
+    public function update(Request $request){
         
-        $idLivro = $req->id;
+        $idLivro = $request->id;
         $livro=Livro::where('id_livro',$idLivro)->first();
         $imagemAntiga = $livro->imagem_capa;
         $excertoAntigo = $livro->excerto;
-            if(Gate::allows('atualizar-livro',$livro)|| Gate::allows('admin')){
-                $updateLivro = $req -> validate([
+            if(Gate::allows('atualizar-livro',$livro)|| Gate::allows('admin')||Gate::allows('normal')){
+                $updateLivro = $request -> validate([
                     'titulo'=>['required','min:3', 'max:100'],
                     'idioma'=>['required','min:3', 'max:10'],
-                    'total_paginas'=>['nullable','numeric', 'max:1'],
+                    'total_paginas'=>['nullable','numeric', 'min:1'],
                     'data_edicao'=>['nullable','date'],
                     'isbn'=>['required','min:13','max:13'],
                     'observacoes'=>['nullable','min:3', 'max:255'],
@@ -161,11 +158,11 @@ class LivrosController extends Controller
                     'id_genero'=>['numeric', 'nullable'],
                     'sinopse'=>['nullable','min:3', 'max:255'],
                 ]);
-                if($req->hasFile('imagem_capa')){
+                if($request->hasFile('imagem_capa')){
                     $nomeImagem = $request->file('imagem_capa')->getClientOriginalName();
     
                     $nomeImagem = time().'_'.$nomeImagem;
-                    $guardarImagem = $req->file('imagem_capa')->storeAs('imagens/livros',$nomeImagem);
+                    $guardarImagem = $request->file('imagem_capa')->storeAs('imagens/livros',$nomeImagem);
 
                     if(!is_null($imagemAntiga)){
                         Storage::Delete('imagens/livros/'.$imagemAntiga);
@@ -174,11 +171,11 @@ class LivrosController extends Controller
                     $updateLivro['imagem_capa']=$nomeImagem;
                 }
 
-                if($req->hasFile('excerto')){
-                    $nomeExcerto = $req->file('excerto')->getClientOriginalName();
+                if($request->hasFile('excerto')){
+                    $nomeExcerto = $request->file('excerto')->getClientOriginalName();
     
                     $nomeExcerto = time().'_'.$nomeExcerto;
-                    $guardarExcerto = $req->file('excerto')->storeAs('documentos/livros',$nomeExcerto);
+                    $guardarExcerto = $request->file('excerto')->storeAs('documentos/livros',$nomeExcerto);
 
                     if(!is_null($excertoAntigo)){
                         Storage::Delete('documentos/livros/'.$excertoAntigo);
@@ -187,8 +184,8 @@ class LivrosController extends Controller
                     $updateLivro['excerto']=$nomeExcerto;
                 }
 
-                $autores = $req->id_autor;
-                $editoras = $req->id_editora;
+                $autores = $request->id_autor;
+                $editoras = $request->id_editora;
 
                 $livro->update($updateLivro);
                 $livro->autores()->sync($autores);
@@ -205,8 +202,8 @@ class LivrosController extends Controller
     }
 
 
-    public function delete(Request $req){
-        $idLivro = $req ->id;
+    public function delete(Request $request){
+        $idLivro = $request ->id;
         $livro = Livro::where('id_livro', $idLivro)->first();
             if(Gate::allows('atualizar-livro',$livro)|| Gate::allows('admin')){
                 if(isset($livro->user->id_user)){
@@ -247,8 +244,8 @@ class LivrosController extends Controller
             }
     }
 
-    public function destroy(Request $req){
-        $idLivro = $req ->id;
+    public function destroy(Request $request){
+        $idLivro = $request ->id;
         $livro = Livro::findOrfail($idLivro);
 
         $autoresLivro = Livro::findOrfail($idLivro)->autores;
@@ -267,11 +264,11 @@ class LivrosController extends Controller
 
 
 
-    public function comentario(Request $req){
-        $idLivro = $req ->id;
+    public function comentario(Request $request){
+        $idLivro = $request ->id;
 
         $livro = Livro::findOrfail($idLivro);
-        $comentario = $req -> validate([
+        $comentario = $request -> validate([
             'comentario'=>['required','','min:1', 'max:255'],
         ]);
         if (Auth::check()){

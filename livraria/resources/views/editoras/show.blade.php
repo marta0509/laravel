@@ -4,6 +4,7 @@
 Editoras-show
 @endsection
 @section('conteudo')
+@if(auth()->check())
 <br>
 <ul>
 IDE:{{$editora->id_editora}}<br>
@@ -26,8 +27,8 @@ Criado:{{$editora->created_at}}<br>
 Atualizado:{{$editora->updated_at}}<br>
 Eliminado:{{$editora->deleted_at}}<br>-->
 
-@if(auth()->check())
-	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))
+
+	@if(Gate::allows('atualizar-editora',$editora)||Gate::allows('admin'))
 <a href="{{route('editoras.edit', ['id'=>$editora->id_editora])}}" class="btn btn-primary">Editar Editora</a>
 <a href="{{route('editoras.delete', ['id'=>$editora->id_editora])}}" class="btn btn-primary">Eliminar Editora</a>
 	@endif

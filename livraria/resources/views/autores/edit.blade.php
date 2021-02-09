@@ -4,7 +4,7 @@ Autores-Edit
 @endsection
 @section('conteudo')
 <br>
-<form action="{{route('autores.update', ['id'=>$autor->id_autor])}}" method="post">
+<form action="{{route('autores.update', ['id'=>$autor->id_autor])}}" enctype="multipart/form-data" method="post">
 @csrf
 @method('patch')
 

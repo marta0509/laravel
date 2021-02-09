@@ -3,6 +3,7 @@
 Livraria-generos
 @endsection
 @section('conteudo')
+@if(auth()->check())
 <br>
 <ul>
 @foreach($generos as $genero)
@@ -14,8 +15,8 @@ Livraria-generos
 <br>
 {{$generos->render()}}
 <br>
-@if(auth()->check())
-	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))	
+
+	@if(Gate::allows('atualizar-genero',$genero)||Gate::allows('admin'))	
 <a href="{{route('generos.create')}}" class="btn btn-primary">Adicionar Genero</a>
 	@endif
 @endif

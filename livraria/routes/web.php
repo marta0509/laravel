@@ -142,10 +142,8 @@ Route::get('/pesquisa','App\Http\Controllers\PesquisaController@index')
 Route::post('/form','App\Http\Controllers\PesquisaController@formenviado')
     ->name('pesquisa.form');
 
-
-
-
-
+//LOGIN
+    
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -16,10 +16,11 @@ Livraria-livros
 {{$livros->render()}}
 <br>
 @if(auth()->check())
-	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin'))
+	@if(Gate::allows('atualizar-livro',$livro)||Gate::allows('admin')||Gate::allows('normal'))
 <a href="{{route('livros.create')}}" class="btn btn-primary">Adicionar Livro</a>
 	@endif
 @endif
+
 <br>
 <br>
 </ul>

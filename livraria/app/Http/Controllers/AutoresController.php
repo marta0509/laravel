@@ -11,7 +11,7 @@ class AutoresController extends Controller
     //
     public function index(){
         //$autores = Autor::all()->sortbydesc('idl');
-        $autores= Autor::paginate(4);
+        $autores= Autor::paginate(8);
         return view('autores.index',[
             'autores'=>$autores
         ]);
@@ -37,7 +37,6 @@ class AutoresController extends Controller
     }
 
     public function store(Request $req){
-        if(Gate::allows('admin')){
             $novoAutor = $req -> validate([
                 'nome'=>['required','min:3', 'max:100'],
                 'nacionalidade'=>['nullable','min:3', 'max:10'],
@@ -57,33 +56,26 @@ class AutoresController extends Controller
             return redirect()->route('autores.show',[
                 'id' => $autor->id_autor
             ]);
-        }
-        else{
-            return redirect()->route('autores.index')
-            ->with('msg','Não tem permissão para aceder a área pretendida');
-        }
+        
+       
     }
 
     public function edit(Request $req){
-        if(Gate::allows('admin')){
+       
             $editAutor = $req->id;
             $autor=Autor::where('id_autor',$editAutor)->first();
 
             return view('autores.edit',[
                 'autor'=>$autor
             ]);
-        }
-        else{
-            return redirect()->route('autores.index')
-            ->with('msg','Não tem permissão para aceder a área pretendida');
-        }
+        
     }
 
     public function update(Request $req){
         $idAutor = $req ->id;
         $autor = Autor::where('id_Autor', $idAutor)->first();
         $fotografiaAntiga = $autor->fotografia;
-        if(Gate::allows('admin')){
+        if(Gate::allows('atualizar-autor',$autor)|| Gate::allows('admin')){
             $updateAutor = $req -> validate([
                 'nome'=>['required','min:3', 'max:100'],
                 'nacionalidade'=>['nullable','min:3', 'max:10'],
