@@ -10,6 +10,8 @@ use App\Models\Livro;
 use App\Models\Genero;
 use App\Models\Autor;
 use App\Models\Editora;
+use Mail;
+use App\Mail\Notificacao;
 
 class LivrosController extends Controller
 {
@@ -17,6 +19,7 @@ class LivrosController extends Controller
     public function index(){
         //$livros = Livro::all()->sortbydesc('idl');
         $livros= Livro::paginate(8);
+        Mail::to('a14177@aedah.pt')->send(new Notificacao($livros));
         return view('livros.index',[
             'livros'=>$livros
         ]);
@@ -280,4 +283,6 @@ class LivrosController extends Controller
             ]);
         }
     }
+
+
 }

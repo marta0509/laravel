@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Livro;
 
+
 class PesquisaController extends Controller
 {
     //
@@ -16,4 +17,6 @@ class PesquisaController extends Controller
         $re=Livro::where('titulo','Like','%'.$string.'%')->get();
         return view('pesquisares',['pesquisa'=>$string,'resultado'=>$re]);
     }
+
+    
 }
